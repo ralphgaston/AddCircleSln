@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- PackageContents describing the bundle-->
+    <ItemGroup>
+        <PackageFile Include=".\PackageContents.xml"/>
+    </ItemGroup>
+    <!-- Help file -->
+    <ItemGroup>
+        <HelpFile Include=".\helpEn.htm"/>
+    </ItemGroup>
+    <!-- Icon -->
+    <ItemGroup>
+        <IconFile Include=".\icon.ico"/>
+    </ItemGroup>
+    <!-- Ribbon file-->
+    <ItemGroup>
+        <CuiFile Include=".\CE_*.cui"/>
+    </ItemGroup>
+    <ItemGroup Condition="Exists('$(ProjectDir)app.config')">
+        <ConfigFile Include="$(ProjectDir)app.config"/>
+    </ItemGroup>
+    <Target Name="BundlePackageFiles"
+            AfterTargets="AfterBuild">
+        <Message Text="Copying Package Files..."/>
+        <Copy
+            SourceFiles="@(HelpFile)"
+            DestinationFolder="$(ProjectBundle)\Contents"
+            Condition="Exists('%(RootDir)%(Directory)%(Filename)%(Extension)')">
+        </Copy>
+        <Copy
+            SourceFiles="@(CuiFile)"
+            DestinationFolder="$(ProjectBundle)\Contents\Resource"
+            Condition="Exists('%(RootDir)%(Directory)%(Filename)%(Extension)')">
+        </Copy>
+        <Copy
+            SourceFiles="@(IconFile)"
+            DestinationFolder="$(ProjectBundle)\Contents\Resource"
+            Condition="Exists('%(RootDir)%(Directory)%(Filename)%(Extension)')">
+        </Copy>
+        <Copy
+            SourceFiles="@(PackageFile)"
+            DestinationFolder="$(ProjectBundle)"
+            Condition="Exists('%(RootDir)%(Directory)%(Filename)%(Extension)')">
+        </Copy>
+        <Copy
+            SourceFiles="@(ConfigFile)"
+            DestinationFolder="$(ProjectBundle)\Contents\$(ARXSDKVersion)\x64"
+            Condition="Exists('%(RootDir)%(Directory)%(Filename)%(Extension)')">
+        </Copy>
+    </Target>
+    <!-- Remove the .bundle from the %APPDATA%\Autodesk\ApplicationsPlugins directory. -->
+    <Target Name="AfterClean">
+        <RemoveDir Directories="$(ProjectBundle)"/>
+    </Target>
+</Project>

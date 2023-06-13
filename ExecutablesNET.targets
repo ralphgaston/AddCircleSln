@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+    <ItemDefinitionGroup>
+        
+    </ItemDefinitionGroup>
+
+    <Target Name="BundleExecutableFiles">
+        <!-- Binaries. Added to group here because target is called after build so files don't exist at project load.-->
+        <ItemGroup>
+            <LibAndDebugFiles Include="$(ProjectDir)$(OutDir)*.dll"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(LibAndDebugFiles)"
+              DestinationFolder="$(ProjectBundle)\Contents\$(ARXSDKVersion)\x64">
+        </Copy>
+    </Target>
+</Project>

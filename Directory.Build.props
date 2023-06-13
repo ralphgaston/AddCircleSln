@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+    <PropertyGroup>
+        <ARXSDKVersion>24.2</ARXSDKVersion>
+        <AutoCADVersion>2023</AutoCADVersion>
+        <AutoCADRelease>24.2</AutoCADRelease>
+    </PropertyGroup>
+    <!-- Set bundle name (Framing is condensed into one) -->
+    <Choose>
+        <!-- If it's any framing project other than BeamDesign, no other files. -->
+        <When Condition="'$(MSBuildProjectName)'=='BeamDesign' Or '$(MSBuildProjectName)'=='Ceiling' Or '$(MSBuildProjectName)'=='Loads' Or '$(MSBuildProjectName)'=='Roof' Or '$(MSBuildProjectName)'=='Lateral Design' Or '$(MSBuildProjectName)'=='Flipper'">
+            <!-- Framing files go into one bundle -->
+            <PropertyGroup>
+                <PropertyBundle>$(AppData)\Autodesk\ApplicationPlugins\Framing.bundle</PropertyBundle>
+            </PropertyGroup>
+        </When>
+        <Otherwise>
+            <PropertyGroup>
+                <PropertyBundle>$(AppData)\Autodesk\ApplicationPlugins\$(MSBuildProjectName).bundle</PropertyBundle>
+            </PropertyGroup>
+        </Otherwise>
+    </Choose>
+</Project>
