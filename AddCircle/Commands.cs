@@ -61,6 +61,57 @@ namespace AddCircle
                     }
                 }
             }
+            [CommandMethod("DrawLine")]
+            public void Test2()
+            {
+                // Grab the top most objects
+                var doc = AcAp.DocumentManager.MdiActiveDocument;
+                var db = doc.Database;
+                var ed = doc.Editor;
+                
+                // get the start point
+                PromptPointOptions prmptPtOpt = new PromptPointOptions("Select start point");
+                PromptPointResult ptRes = ed.GetPoint(prmptPtOpt);
+                Point3d pt = Point3d.Origin;
+                if (ptRes.Status.Equals(PromptStatus.OK))
+                {
+                    pt = ptRes.Value;
+                }
+
+                // get the end point
+                prmptPtOpt.Message = "Select end point";
+                prmptPtOpt.BasePoint = pt;
+                prmptPtOpt.UseDashedLine = true;
+                ptRes = ed.GetPoint(prmptPtOpt);
+                Point3d endPt = Point3d.Origin;
+                if (ptRes.Status.Equals(PromptStatus.OK))
+                {
+                    endPt = ptRes.Value;
+                }
+
+                // start a transaction and draw the line
+                using (var tr = db.TransactionManager.StartTransaction())
+                {
+                    Line line = new Line(pt, endPt);
+                    var blockTable = (BlockTable)tr.GetObject(db.BlockTableId, OpenMode.ForRead);
+
+                    // Grab the model space block record from the block table, using the model space objectid
+                    var modelSpace
+                        = (BlockTableRecord)tr
+                        .GetObject(blockTable[BlockTableRecord.ModelSpace],
+                                   OpenMode.ForWrite);
+
+                    // Append the line to the model space block record.
+                    var objectId = modelSpace.AppendEntity(line);
+
+                    // add the line to the transaction
+                    tr.AddNewlyCreatedDBObject(line, true);
+
+                    // commit the transaction
+                    tr.Commit();
+
+                }
+            }
         }
     }
 }
